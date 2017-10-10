@@ -1,0 +1,19 @@
+Import these Cmdlets in your PowerShell script like this:
+
+UpdateUserEntitlement.ps1:Import-Module $Cmdlets\getSessionAuthToken.ps1  -force
+UpdateUserEntitlement.ps1:Import-Module $Cmdlets\getKeyAuthToken.ps1 -force
+UpdateUserEntitlement.ps1:Import-Module $Cmdlets\getStreamID.ps1 -force
+UpdateUserEntitlement.ps1:Import-Module $Cmdlets\getUserName.ps1 -force
+UpdateUserEntitlement.ps1:Import-Module $Cmdlets\getRoomName.ps1 -force
+UpdateUserEntitlement.ps1:Import-Module $Cmdlets\getUserStatus.ps1 -force
+
+
+Call these Cmdlets in your PowerShell script like this:
+
+$sessionToken = getSessionAuthToken($sessionAuthUrl,$Thumbprint)
+$keyToken = getKeyAuthToken($keyAuthUrl,$Thumbprint)
+$roomName = getRoomName($roomUrl)
+$streamID = getStreamID ($datafeedUrl,$global:hdrs)
+$userStatus = getUserStatus($userIdUrl)
+$getUserName = getUserName($userIdUrl)
+
