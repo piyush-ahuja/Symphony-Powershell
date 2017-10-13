@@ -39,16 +39,16 @@
     $certificateFilePassword =    "changeit"
 
     $sessionAuthUrl =  "https://mycompany-api.symphony.com/sessionauth/v1/authenticate"
-    $keyAuthUrl = $sessionAuthUrl
+    $keyAuthUrl = "https://mycompany-api.symphony.com/keyauth/v1/authenticate"
     $podUrl =  "https://mycompany.symphony.com"
-    $agentUrl = $podUrl/agent
+    $agentUrl = "$podUrl/agent"
     $datafeedUrl = "$agentUrl/v1/datafeed/create"
     $userUrl = "$podUrl/v2/user"
     $roomUrl = "$podUrl/v2/room"
     #If you have an outbound proxy then uncomment this line and add in your HTTP proxy value such as "http://myproxy:8888"
     #currently this only supports unauthenticating proxys 
     #$proxy = "-Proxy http://myproxy:8888/"
-    $Cmdlets = "/Users/joanne.mann/Symphony-Powershell/Cmdlets"
+    $Cmdlets = "C:/Symphony-Powershell/Cmdlets"
 
 # Script Body
 
@@ -88,17 +88,13 @@ try {
 #Set up for processing
 Import-Module $Cmdlets\getSessionAuthToken.ps1  -force
 Import-Module $Cmdlets\getKeyAuthToken.ps1 -force
-Import-Module $Cmdlets\getStreamID.ps1 -force
 Import-Module $Cmdlets\getUserName.ps1 -force
-Import-Module $Cmdlets\getRoomName.ps1 -force
 Import-Module $Cmdlets\getUserStatus.ps1 -force
 
 $sessionAuthToken = getSessionAuthToken $sessionAuthUrl $certificateObject.Thumbprint
 $global:hdrs.Set_Item("sessionToken",$sessionAuthToken)
 $keyManagerToken = getKeyAuthToken $keyAuthUrl $certificateObject.Thumbprint
 $global:hdrs.Set_Item("keyManagerToken",$keyManagerToken)
-$streamID = getStreamID $datafeedUrl $global:hdrs
-if ($streamID) {$readUrl = "$agentUrl/v2/datafeed/$streamID/read"} else {Write-host "Could not get a streamID.  Exiting";exit}
 
 # Get Full Symphony userlist
 #$hdrs = @{}
