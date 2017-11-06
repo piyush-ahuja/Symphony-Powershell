@@ -123,7 +123,7 @@ Write-Host "Found Id $id"
 $DataList = @{}
 $DataList.Add("id",$id)
 $json = $DataList | ConvertTo-Json
-Write-Host "Json: $json"
+#Write-Host "Json: $json"
 
 # Add each entry to the ConversationID
   try {
