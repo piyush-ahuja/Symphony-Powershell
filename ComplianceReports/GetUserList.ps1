@@ -217,11 +217,11 @@ $fullUserList | foreach {
 
 
                 default {
-                            If ($newEntitlement -like "*$($entitlement.entitlment)*") { # do nothing
+                            If (($newEntitlement -like "*$($entitlement.entitlment)*") -Or ($entitlement.entitlment -Contains "isScreenSharingEnabled")) { # do nothing
                                                                                          }
                             else {
                                     $newEntitlement = $newEntitlement + $($entitlement.entitlment)
-                                    Write-Host ""$($entitlement.entitlment)" { $test = $entitlement.enabled }" -ForegroundColor white -BackgroundColor red
+                                    Write-Host "ERROR: Unknown user entitlement '$($entitlement.entitlment)'. Update script." -ForegroundColor white -BackgroundColor red
                                  }
                         }
 
