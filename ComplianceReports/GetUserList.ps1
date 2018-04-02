@@ -18,11 +18,11 @@
 
 # Fill in these Variables
 
-    $certificateFileAndPath =     "C:\mycerts\bot1.p12"
+    $certificateFileAndPath =     "C:\mycerts\my_Bot_cert.p12"
     $certificateFilePassword =    "changeit"
 
     
-    $sessionAuthUrl =  "https://mycompany-api.symphony.com:8444/sessionauth/v1/authenticate"
+    $sessionAuthUrl =  "https://mycompany-api.symphony.com/sessionauth/v1/authenticate"
     $podUrl =  "https://mycompany.symphony.com:443"
 
 
@@ -203,13 +203,26 @@ $fullUserList | foreach {
                 "canUseInternalVideo"                 { $canUseInternalVideo =    $entitlement.enabled }
                 "postReadEnabled"                     { $postReadEnabled =        $entitlement.enabled }
                 "canUseInternalAudio"                 { $canUseInternalAudio =    $entitlement.enabled }
+                "canCreateMultiLateralRoom"           { $canCreateMultiLateralRoom = $entitlement.enabled }
+                "canUseFirehose"                      { $canUseFirehose =         $entitlement.enabled }
+                "canViewInternalScreenShareMobile"    { $canViewInternalScreenShareMobile = $entitlement.enabled }
+                "canJoinMultiLateralRoom"             { $canJoinMultiLateralRoom = $entitlement.enabled }
+                "mustBeRecorded"                      { $mustBeRecorded = $entitlement.enabled }
+                "canUseCompactMode"                   { $canUseCompactMode = $entitlement.enabled }
+                "canUseInternalVideoMobile"           { $canUseInternalVideoMobile = $entitlement.enabled }
+                "canUseInternalAudioMobile"           { $canUseInternalAudioMobile = $entitlement.enabled }
+                "canProjectInternalScreenShareMobile" { $canProjectInternalScreenShareMobile = $entitlement.enabled }
+                "canIntegrateEmail"                   { $canIntegrateEmail = $entitlement.enabled }
+                "canChatWithCepUser"                  { $canChatWithCepUser = $entitlement.enabled }
+
+
 
                 default {
                             If ($newEntitlement -like "*$($entitlement.entitlment)*") { # do nothing
                                                                                          }
                             else {
                                     $newEntitlement = $newEntitlement + $($entitlement.entitlment)
-                                    Write-Host "ERROR: Unknown user entitlement '$($entitlement.entitlment)'. Update script." -ForegroundColor white -BackgroundColor red
+                                    Write-Host ""$($entitlement.entitlment)" { $test = $entitlement.enabled }" -ForegroundColor white -BackgroundColor red
                                  }
                         }
 
@@ -284,6 +297,7 @@ $fullUserList | foreach {
         $header= $header + ",SUPER_ADMINISTRATOR,ADMINISTRATOR,SUPER_COMPLIANCE_OFFICER,COMPLIANCE_OFFICER,L2_SUPPORT,L1_SUPPORT,CONTENT_MANAGEMENT,USER_PROVISIONING,KEY_MANAGER,CONTENT_EXPORT_SERVICE"
         $header= $header+  ",isExternalIMEnabled,isExternalRoomEnabled,canShareFilesExternally,isScreenSharingEnabled,canCreatePublicRoom,delegatesEnabled,sendFilesEnabled,canCreatePushedSignals,canUpdateAvatar"
         $header= $header+  ",canProjectInternalScreenShare,postWriteEnabled,canViewInternalScreenShare,canUseInternalVideo,postReadEnabled,canUseInternalAudio"
+        $header= $header+  ",canCreateMultiLateralRoom,canUseFirehose,canViewInternalScreenShareMobile,canJoinMultiLateralRoom,mustBeRecorded,canUseCompactMode,canUseInternalVideoMobile,canUseInternalAudioMobile,canProjectInternalScreenShareMobile,canIntegrateEmail,canChatWithCepUser"
         $header= $header+  ",ChartIQApp,ChartIQVisible,fintech-app,fintechappVisible,githubWebHookIntegration,githubWebHookIntegrationVisible,hvstApp,hvstAppVisible,infrontApp,infrontAppVisible,jiraWebHookIntegration,jiraWebHookIntegrationVisible"
         $header= $header+  ",spcapiq,spcapiqVisible,salesforceWebHookIntegration,salesforceWebHookIntegrationVisible,selerity,selerityVisible,simpleWebHookIntegration,simpleWebHookIntegrationVisible,zapierWebHookIntegration,zapierWebHookIntegrationVisible,box,boxVisible,djApp,djAppVisible"
 
@@ -302,6 +316,7 @@ $fullUserList | foreach {
   $output = $output + ",$SUPER_ADMINISTRATOR,$ADMINISTRATOR,$SUPER_COMPLIANCE_OFFICER,$COMPLIANCE_OFFICER,$L2_SUPPORT,$L1_SUPPORT,$CONTENT_MANAGEMENT, $USER_PROVISIONING, $KEY_MANAGER, $CONTENT_EXPORT_SERVICE"
   $output = $output + ",$isExternalIMEnabled,$isExternalRoomEnabled,$canShareFilesExternally,$isScreenSharingEnabled,$canCreatePublicRoom,$delegatesEnabled,$sendFilesEnabled,$canCreatePushedSignals,$canUpdateAvatar"
   $output = $output + ",$canProjectInternalScreenShare,$postWriteEnabled,$canViewInternalScreenShare,$canUseInternalVideo,$postReadEnabled,$canUseInternalAudio"
+  $output = $output + ",$canCreateMultiLateralRoom,$canUseFirehose,$canViewInternalScreenShareMobile,$canJoinMultiLateralRoom,$mustBeRecorded,$canUseCompactMode,$canUseInternalVideoMobile,$canUseInternalAudioMobile,$canProjectInternalScreenShareMobile,$canIntegrateEmail,$canChatWithCepUser"
   $output = $output + ",$ChartIQApp,$ChartIQVisible,$fintechapp,$fintechappVisible,$githubWebHookIntegration,$githubWebHookIntegrationVisible,$hvstApp,$hvstAppVisible,$infrontApp,$infrontAppVisible,$jiraWebHookIntegration,$jiraWebHookIntegrationVisible"
   $output = $output + ",$spcapiq,$spcapiqVisible,$salesforceWebHookIntegration,$salesforceWebHookIntegrationVisible,$selerity,$selerityVisible,$simpleWebHookIntegration,$simpleWebHookIntegrationVisible,$zapierWebHookIntegration,$zapierWebHookIntegrationVisible,$box,$boxVisible,$djApp,$djAppVisible"
   
