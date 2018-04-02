@@ -188,7 +188,6 @@ $fullUserList | foreach {
        switch ($entitlement.entitlment) 
             { 
 
-                "isScreenSharingEnabled"              { $isScreenSharingEnabled = $entitlement.enabled }
                 "canCreatePublicRoom"                 { $canCreatePublicRoom =    $entitlement.enabled }
                 "isExternalRoomEnabled"               { $isExternalRoomEnabled =  $entitlement.enabled }
                 "delegatesEnabled"                    { $delegatesEnabled =       $entitlement.enabled }
@@ -295,7 +294,7 @@ $fullUserList | foreach {
         
         $header="ID,userName,emailAddress,displayName,status,accountType,department,division,location,jobFunction,createdBy,createdDate,lastUpdatedDate,lastLoginDate"
         $header= $header + ",SUPER_ADMINISTRATOR,ADMINISTRATOR,SUPER_COMPLIANCE_OFFICER,COMPLIANCE_OFFICER,L2_SUPPORT,L1_SUPPORT,CONTENT_MANAGEMENT,USER_PROVISIONING,KEY_MANAGER,CONTENT_EXPORT_SERVICE"
-        $header= $header+  ",isExternalIMEnabled,isExternalRoomEnabled,canShareFilesExternally,isScreenSharingEnabled,canCreatePublicRoom,delegatesEnabled,sendFilesEnabled,canCreatePushedSignals,canUpdateAvatar"
+        $header= $header+  ",isExternalIMEnabled,isExternalRoomEnabled,canShareFilesExternally,canCreatePublicRoom,delegatesEnabled,sendFilesEnabled,canCreatePushedSignals,canUpdateAvatar"
         $header= $header+  ",canProjectInternalScreenShare,postWriteEnabled,canViewInternalScreenShare,canUseInternalVideo,postReadEnabled,canUseInternalAudio"
         $header= $header+  ",canCreateMultiLateralRoom,canUseFirehose,canViewInternalScreenShareMobile,canJoinMultiLateralRoom,mustBeRecorded,canUseCompactMode,canUseInternalVideoMobile,canUseInternalAudioMobile,canProjectInternalScreenShareMobile,canIntegrateEmail,canChatWithCepUser"
         $header= $header+  ",ChartIQApp,ChartIQVisible,fintech-app,fintechappVisible,githubWebHookIntegration,githubWebHookIntegrationVisible,hvstApp,hvstAppVisible,infrontApp,infrontAppVisible,jiraWebHookIntegration,jiraWebHookIntegrationVisible"
@@ -314,7 +313,7 @@ $fullUserList | foreach {
   
   $output ="$_,$userName,$emailAddress,'$displayName',$status,$accountType,'$department','$division','$location','$jobFunction',$createdBy,$createdDate,$lastUpdatedDate,$lastLoginDate"
   $output = $output + ",$SUPER_ADMINISTRATOR,$ADMINISTRATOR,$SUPER_COMPLIANCE_OFFICER,$COMPLIANCE_OFFICER,$L2_SUPPORT,$L1_SUPPORT,$CONTENT_MANAGEMENT, $USER_PROVISIONING, $KEY_MANAGER, $CONTENT_EXPORT_SERVICE"
-  $output = $output + ",$isExternalIMEnabled,$isExternalRoomEnabled,$canShareFilesExternally,$isScreenSharingEnabled,$canCreatePublicRoom,$delegatesEnabled,$sendFilesEnabled,$canCreatePushedSignals,$canUpdateAvatar"
+  $output = $output + ",$isExternalIMEnabled,$isExternalRoomEnabled,$canShareFilesExternally,$canCreatePublicRoom,$delegatesEnabled,$sendFilesEnabled,$canCreatePushedSignals,$canUpdateAvatar"
   $output = $output + ",$canProjectInternalScreenShare,$postWriteEnabled,$canViewInternalScreenShare,$canUseInternalVideo,$postReadEnabled,$canUseInternalAudio"
   $output = $output + ",$canCreateMultiLateralRoom,$canUseFirehose,$canViewInternalScreenShareMobile,$canJoinMultiLateralRoom,$mustBeRecorded,$canUseCompactMode,$canUseInternalVideoMobile,$canUseInternalAudioMobile,$canProjectInternalScreenShareMobile,$canIntegrateEmail,$canChatWithCepUser"
   $output = $output + ",$ChartIQApp,$ChartIQVisible,$fintechapp,$fintechappVisible,$githubWebHookIntegration,$githubWebHookIntegrationVisible,$hvstApp,$hvstAppVisible,$infrontApp,$infrontAppVisible,$jiraWebHookIntegration,$jiraWebHookIntegrationVisible"
