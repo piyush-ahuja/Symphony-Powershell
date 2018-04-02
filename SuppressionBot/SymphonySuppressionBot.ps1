@@ -55,14 +55,15 @@
     $certificateFileAndPath =     "C:\mycerts\bot.user1.p12"
     $certificateFilePassword =    "changeit"
 
-    $sessionAuthUrl =  "https://mycompany-api.symphony.com/sessionauth/v1/authenticate"
-    $keyAuthUrl = "https://mycompany.symphony.com/keyauth/v1/authenticate"
-    $podUrl =  "https://mycompany-agent.symphony.com"
-    $agentUrl = "https://mycompany-agent.symphony.com/agent"
-    $datafeedUrl = "$agentUrl/v1/datafeed/create"
+    $sessionAuthUrl =  "https://mycompany-api.symphony.com:8444/sessionauth/v1/authenticate"
+    $keyAuthUrl =  "https://mycompany-api.symphony.com/keyauth/v1/authenticate"
+    $agentUrl =  "https://mycompany.symphony.com/agent"
+    $podUrl =  "https://mycompany.symphony.com:443/pod"
 
-    #URL Safe Conversation ID for the private unsearchable administrative room
-    $ConversationID = "aId3yXlXMODZQE_ah1KtLH___qJQ2BMdsB"
+    #Conversation ID for the private unsearchable administrative room
+    $ConversationID = "MBu8Lq8QYTFGnx/DuCh/lX///p2NPCsOdA=="
+
+
 
     #If you have an outbound proxy then uncomment this line and add in your HTTP proxy value such as "http://myproxy:8888"
     #currently this only supports unauthenticating proxys 
@@ -70,7 +71,14 @@
 
 # Script Body
 
+
 Clear-Host
+
+
+# Generate a URLSafe Base64 conversion of the Conversation ID
+$ConversationID = $ConversationID -replace "/","_"
+$ConversationID = $ConversationID -replace '\+',"-" 
+
 Write-Host
 Write-Host
 Write-Host
@@ -79,7 +87,6 @@ Write-Host
 Write-Host
 $beforeTime = Get-Date
 Write-Host "Starting at " $beforeTime.ToLocalTime()
-
 
 $global:hdrs = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $global:hdrs.Add("sessionToken","123")
@@ -153,15 +160,14 @@ try {
 	Write-Host "    There is a problem with your certificate $certificateFileAndPath.  This needs to be resolved, " -ForegroundColor white -BackgroundColor red
 	Write-Host "    before you can try to start your bot.  Exiting. " -ForegroundColor white -BackgroundColor red
         exit
-    }
+}
 
 #Set up for processing
 $sessionAuthToken=getSessionAuthToken
-
 $keyManagerToken = getKeyAuthToken
-
+$datafeedUrl = "$agentUrl/v4/datafeed/create"
 $streamID = getStreamId
-$readUrl = "$agentUrl/v2/datafeed/$streamID/read"
+$readUrl = "$agentUrl/v4/datafeed/$streamID/read"
 
 Write-Host "---Setup complete.  Waiting for suppression requests."
 # This is a daemon, so run forever
@@ -171,7 +177,7 @@ Write-Host "---Setup complete.  Waiting for suppression requests."
 While($true) {
 
   try {
-          $Result = (Invoke-RestMethod -Method GET  -ContentType 'application/json' -Headers $global:hdrs  -Uri "$readUrl").message
+          $Result = (Invoke-RestMethod -Method GET  -Headers $global:hdrs  -Uri "$readUrl").payload.messageSent.message.message
 	  if ($Result -match $MessageIDMatch -and $Result -notmatch "I am a Suppression Bot") {
 
 	    # Generate a URLSafe Base64 conversion of the Message ID
@@ -185,30 +191,30 @@ While($true) {
 	   # Message the user
  	    try {
 		  $msg = @{}
-		  $msg.Add("message","Hello.  Received your request for  message ID $messageID.  This is a permanent and irreversible operation.  Good luck. :pizza:")
+		  $msg.Add("message","Received your request for  message ID $messageID.  This is a permanent and irreversible operation. Suppressing message now.")
 	 	  $msg.Add("format","TEXT")
 		  $msgjson = $msg | ConvertTo-Json
-Write-Host "Calling Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $podUrl/agent/v2/stream/$ConversationID/message/create"
-		  $messageResult = (Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $podUrl/agent/v2/stream/$ConversationID/message/create)
+Write-Host "Calling Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $agentUrl/v2/stream/$ConversationID/message/create"
+		  $messageResult = (Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $agentUrl/v2/stream/$ConversationID/message/create)
 		} catch { 
 		  Write-Host "ERROR: REST call to pod endpoint failed with error '$($_.Exception.Status) - $($_.Exception)'" -ForegroundColor white -BackgroundColor red
-    		  Write-Host "Current endpoint: '$podUrl/agent/v2/stream/$ConversationID/message/create'" -ForegroundColor white -BackgroundColor red
+    		  Write-Host "Current endpoint: '$agentUrl/v2/stream/$ConversationID/message/create'" -ForegroundColor white -BackgroundColor red
 		processError($($_.CategoryInfo.Reason), $($_.Exception.Status), $($_.Exception))
 		}
 	  
 	  # Perform the suppression
  	  try {
-                  $messageResult = (Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $podUrl/pod/v1/admin/messagesuppression/$MessageID/suppress)
+                  $messageResult = (Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $podUrl/v1/admin/messagesuppression/$MessageID/suppress)
                 } catch {
                   Write-Host "ERROR: REST call to pod endpoint failed with error '$($_.Exception.Status) - $($_.Exception)'" -ForegroundColor white -BackgroundColor red
-                  Write-Host "Current endpoint: '$podUrl/pod/v1/admin/messagesuppression/$MessageID/suppress'" -ForegroundColor white -BackgroundColor red
+                  Write-Host "Current endpoint: '$podUrl/v1/admin/messagesuppression/$MessageID/suppress'" -ForegroundColor white -BackgroundColor red
 	
 
 		  $msg = @{}                  
 		  $msg.Add("message","I had an issue with message ID $messageID.  The operation did not complete. Please check that you have a correct message ID format.  You can just cut+paste and I will take care of making it a URL safe Message ID. ")
                   $msg.Add("format","TEXT")
                   $msgjson = $msg | ConvertTo-Json
-                  $messageResult = (Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $podUrl/agent/v2/stream/$ConversationID/message/create)
+                  $messageResult = (Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $agentUrl/v2/stream/$ConversationID/message/create)
 		processError($($_.CategoryInfo.Reason), $($_.Exception.Status), $($_.Exception))
                 }
 Write-Host "Completed: $messageResult"
@@ -222,10 +228,10 @@ Find the Message ID by clicking on the timestamp of the message.  It typically l
 
 Because this bot uses datafeed, you can also suppress messages anywhere in your pod from a room in which this bot user is added.
 
-Your actions in this room are permanent and irreversible so please act responsibly.')
+Your actions in this room are permanent and irreversible so please act responsibly..')
         $msg.Add("format","TEXT")
         $msgjson = $msg | ConvertTo-Json
-        $messageResult = (Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $podUrl/agent/v2/stream/$ConversationID/message/create)
+        $messageResult = (Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $agentUrl/v2/stream/$ConversationID/message/create)
 }
 
  
@@ -234,7 +240,9 @@ Your actions in this room are permanent and irreversible so please act responsib
 
     Write-Host "ERROR: REST call to pod endpoint failed with error '$($_.Exception.Status) - $($_.Exception)'" -ForegroundColor white -BackgroundColor red
     Write-Host "Current endpoint: '$readUrl'" -ForegroundColor white -BackgroundColor red
-    Write-Host "Failed to connect on $readUrl "
+    Write-Host "Failed to connect on $readUrl."
+    Write-Host "     ...Sleeping while you try to figure out what is wrong. "
+Start-Sleep -s 30
   }
 } 
   Write-Host "Elapsed time: " (NEW-TIMESPAN –Start $beforeTime –End (Get-Date)) 
