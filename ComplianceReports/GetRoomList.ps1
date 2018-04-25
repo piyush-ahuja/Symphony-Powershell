@@ -1,6 +1,6 @@
 ﻿# Notes on the Script
 
-    # This script was designed to output a wealth of data about every Symphony user to a CSV file for further examination in Excel
+    # This script was designed to output a wealth of data about every Symphony chat to a CSV file for further examination in Excel
     # This is a Windows PowerShell Script and it was tested on Powershell 5.1 which can be found here: https://www.microsoft.com/en-us/download/details.aspx?id=54616
     # You may also enjoy the Windows Powershell Ingtegrated Script Environment (ISE) described here: https://msdn.microsoft.com/en-us/powershell/scripting/core-powershell/ise/introducing-the-windows-powershell-ise
     # You must run "Set-ExecutionPolicy RemoteSigned" as described here: http://windowsitpro.com/powershell/running-powershell-scripts-easy-1-2-3
