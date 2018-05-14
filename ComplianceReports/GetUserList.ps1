@@ -35,6 +35,7 @@
 
 # Script Body
 
+  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
   $adminCount=0
   $superAdminCount=0
   $systemCount=0
