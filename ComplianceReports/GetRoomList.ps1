@@ -37,6 +37,7 @@
 # Script Body
 
   $streamCount=0
+  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 Clear-Host
 Write-Host
