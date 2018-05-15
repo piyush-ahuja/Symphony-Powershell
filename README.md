@@ -20,6 +20,9 @@ PowerShell Utilities for administering a Symphony pod
     #    http://windowsitpro.com/powershell/running-powershell-scripts-easy-1-2-3
     # To successfully authorize, you must upload the p12 into the Certificate Manager in Windows.  To do this, 
     #    simply click on the p12 file in File Explorer, and accept all of the defaults when the Certificate manager opens. 
+    # In version 1.51 of Symphony, only TLS v1.2 is supported.  This line forces .NET to use TLS v1.2:
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 
     # Modify the "Fill in these Variables" section below for your specific pod and environment
 
