@@ -79,6 +79,10 @@ Clear-Host
 $ConversationID = $ConversationID -replace "/","_"
 $ConversationID = $ConversationID -replace '\+',"-" 
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+if ($podUrl  -inotmatch "/pod") { $podUrl = $podUrl + "/pod/" }
+
 Write-Host
 Write-Host
 Write-Host
@@ -180,10 +184,17 @@ While($true) {
           $Result = (Invoke-RestMethod -Method GET  -Headers $global:hdrs  -Uri "$readUrl").payload.messageSent.message.message
 	  if ($Result -match $MessageIDMatch -and $Result -notmatch "I am a Suppression Bot") {
 
+        #drop messageml
+        $Result -match "suppress (?<content>.*)</p>"
+        $Result=$matches.content
+
 	    # Generate a URLSafe Base64 conversion of the Message ID
 	    $messageID = $Result -replace $MessageIDMatch, '$1'
 	    $messageID = $messageID -replace "/","_"
 	    $messageID = $messageID -replace '\+',"-" 
+        $messageID = $messageID -replace ' ',""
+        $messageID = $messageID -replace '==',""
+
 	    Write-Host "Found message: $Result for messageID $messageID "
   	    $user = $_.fromUserId
 	    #Write-Host "From User: $user $_ $Result.fromUserId"
@@ -225,9 +236,7 @@ Write-Host "Completed: $messageResult"
 You are in this private unsearchable room because you have been specially invited by an administrator.  
 You can suppress messages anywhere in your pod by entering in this room the keyword "suppress" followed by a cut+paste of a Message ID.  
 Find the Message ID by clicking on the timestamp of the message.  It typically looks something like MlAAAAXB+rpBMut9d4tpQn///qI3ipmCdA==.  Just cut+paste the whole thing and I will take care of converting it.  
-
 Because this bot uses datafeed, you can also suppress messages anywhere in your pod from a room in which this bot user is added.
-
 Your actions in this room are permanent and irreversible so please act responsibly..')
         $msg.Add("format","TEXT")
         $msgjson = $msg | ConvertTo-Json
@@ -248,4 +257,3 @@ Start-Sleep -s 30
   Write-Host "Elapsed time: " (NEW-TIMESPAN –Start $beforeTime –End (Get-Date)) 
 
 exit
-
