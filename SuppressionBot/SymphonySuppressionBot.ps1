@@ -81,7 +81,12 @@ $ConversationID = $ConversationID -replace '\+',"-"
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
+# Clean up URLs so they matche what is expected in later function calls
 if ($podUrl  -inotmatch "/pod") { $podUrl = $podUrl + "/pod/" }
+if ($agentUrl  -inotmatch "/agent") { $agentUrl = $agentUrl + "/agent/" }
+if ($sessionAuthUrl  -inotmatch "/sessionauth/v1/authenticate") { $sessionAuthUrl = $sessionAuthUrl + "/sessionauth/v1/authenticate/" }
+if ($keyAuthUrl  -inotmatch "/keyauth/v1/authenticate") { $keyAuthUrl = $keyAuthUrl + "/keyauth/v1/authenticate/" }
+
 
 Write-Host
 Write-Host
