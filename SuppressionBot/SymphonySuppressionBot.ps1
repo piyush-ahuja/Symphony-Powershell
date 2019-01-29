@@ -186,12 +186,17 @@ Write-Host "---Setup complete.  Waiting for suppression requests."
 While($true) {
 
   try {
-          $Result = (Invoke-RestMethod -Method GET  -Headers $global:hdrs  -Uri "$readUrl").payload.messageSent.message.message
+
+            $Message = Invoke-RestMethod -Method GET  -Headers $global:hdrs  -Uri "$readUrl"
+          $Result = $Message.payload.messageSent.message.message
+          $Result -match "suppress (?<content>.*)</p>"
+          $Result="suppress " + $matches.content
+
 	  if ($Result -match $MessageIDMatch -and $Result -notmatch "I am a Suppression Bot") {
 
         #drop messageml
-        $Result -match "suppress (?<content>.*)</p>"
-        $Result=$matches.content
+
+
 
 	    # Generate a URLSafe Base64 conversion of the Message ID
 	    $messageID = $Result -replace $MessageIDMatch, '$1'
@@ -227,7 +232,7 @@ Write-Host "Calling Invoke-RestMethod -Method POST  -ContentType 'application/js
 	
 
 		  $msg = @{}                  
-		  $msg.Add("message","I had an issue with message ID $messageID.  The operation did not complete. Please check that you have a correct message ID format.  You can just cut+paste and I will take care of making it a URL safe Message ID. ")
+		  $msg.Add("message","I had an issue with message ID $messageID.  The operation did not complete. Please check that you have a valid message ID in the correct format.  You can just cut+paste and I will take care of making it a URL safe Message ID. ")
                   $msg.Add("format","TEXT")
                   $msgjson = $msg | ConvertTo-Json
                   $messageResult = (Invoke-RestMethod -Method POST  -ContentType 'application/json' -Headers $global:hdrs -Body $msgjson -Uri $agentUrl/v2/stream/$ConversationID/message/create)
